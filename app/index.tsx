@@ -1,4 +1,7 @@
+import CustomeButton from '@/components/CustomeButton';
+import { StatusBar } from 'expo-status-bar';
 import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Redirect, router } from 'expo-router';
 
 export default function RootLayout() {
     return (
@@ -21,8 +24,16 @@ export default function RootLayout() {
                         </Text>
                         <Image className='absolute -bottom-2  -right-0 w-[76px] h-[15px]' source={require('../assets/images/path.png')} />
                     </View>
+                    <Text className='text-white font-pregular text-center text-sm mt-4'>Aora is a platform that provides you with the best experience for learning.
+                    </Text>
+                    <CustomeButton
+                        title='Continue with Email'
+                        onPress={() => router.push('/sign-in')}
+                        containerStyle='w-full'
+                    />
                 </View>
             </ScrollView>
+            <StatusBar backgroundColor='#161622' style='light' />
         </SafeAreaView>
     );
 }
