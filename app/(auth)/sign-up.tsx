@@ -4,16 +4,24 @@ import FormField from '@/components/FormField'
 import CustomeButton from '@/components/CustomeButton'
 import { Link } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+import { CreateUser } from '../lip/appwrite'
+
+interface ICreateUser {
+    email: string,
+    password: string
+    username: string
+}
 
 const SignUp = () => {
-    const [form, setForm] = useState({
-        userName: '',
+    const [form, setForm] = useState<ICreateUser>({
+        username: '',
         email: '',
         password: '',
     })
+
     const [isLoading, setIsLoading] = useState(false)
     const submit = () => {
-        console.log(form)
+        CreateUser({ data: form })
     }
     return (
         <SafeAreaView className='bg-primary h-full'>
@@ -27,8 +35,8 @@ const SignUp = () => {
                     </Text>
                     <FormField
                         title="Username"
-                        value={form.userName}
-                        handleChange={(value: any) => setForm({ ...form, userName: value })}
+                        value={form.username}
+                        handleChange={(value: any) => setForm({ ...form, username: value })}
                         otherStyles='mt-7'
                     />
                     <FormField
