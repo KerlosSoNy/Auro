@@ -1,8 +1,8 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import FormField from '@/components/FormField'
 import CustomeButton from '@/components/CustomeButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { CreateUser } from '../lip/appwrite'
 
@@ -18,10 +18,20 @@ const SignUp = () => {
         email: '',
         password: '',
     })
-
-    const [isLoading, setIsLoading] = useState(false)
-    const submit = () => {
-        CreateUser({ data: form })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const submit = async () => {
+        if (!form.username || !form.email || !form.password) {
+            Alert.alert('Error', 'Please fill in all fields')
+        }
+        setIsSubmitting(true)
+        try {
+            const result = await CreateUser({ data: form })
+            router.replace('/home')
+        } catch (error) {
+            Alert.alert('Error', 'Something went wrong')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
     return (
         <SafeAreaView className='bg-primary h-full'>
@@ -53,11 +63,11 @@ const SignUp = () => {
                         otherStyles='mt-7'
                     />
                     <CustomeButton
-                        title='Sign in'
+                        title='Sign Up'
                         textStyle='text-xl'
                         containerStyle='mt-7 w-full'
                         onPress={submit}
-                        isLoading={isLoading}
+                        isLoading={isSubmitting}
                     />
                     <View className='justify-center items-center pt-5 flex-row gap-2'>
                         <Text className='text-lg text-gray-100'>

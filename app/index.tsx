@@ -2,8 +2,14 @@ import CustomeButton from '@/components/CustomeButton';
 import { StatusBar } from 'expo-status-bar';
 import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 export default function RootLayout() {
+    const { isLoading, isLoggedIn } = useGlobalContext()!;
+
+    if (!isLoading && isLoggedIn) {
+        return <Redirect href="/home" />
+    }
     return (
         <SafeAreaView className="bg-primary w-full h-screen">
             <ScrollView contentContainerStyle={{ height: '100%' }}>

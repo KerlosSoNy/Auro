@@ -1,4 +1,4 @@
-import { Account, Client, ID } from 'react-native-appwrite';
+import { Account, Avatars, Client, Databases, ID, Query } from 'react-native-appwrite';
 
 export const appwriteConfig = {
     endpoint : 'https://cloud.appwrite.io/v1',
@@ -20,7 +20,8 @@ client
 ;
 
 const account = new Account(client);
-
+const avatars = new Avatars(client);
+const databases = new Databases(client);
 interface ICreateUser {
     data: {
         email: string,
@@ -37,8 +38,57 @@ export const CreateUser = async ({data}:ICreateUser) => {
             data.password,
             data.username
         )
+        const avatarUrl = avatars.getInitials(data.username)
+        await signIn({data: {email: data.email, password: data.password}})
+
+        const newUser = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            ID.unique(),
+            {
+                accountId: newAccount.$id,
+                username: data.username,
+                email: data.email,
+                avatar: avatarUrl
+            }
+        )
+
+        return newUser
     }catch(error){
         console.log(error)
     }
     
+}
+
+export const signIn = async({data}: {data:{email: string, password: string}})=>{
+    try{
+        const promise = account.createEmailPasswordSession(data.email, data.password);
+        promise.then(function (response) {
+            console.log(response); // Success
+        }, function (error) {
+            console.log(error); // Failure
+        });
+    }catch(error:any){
+        throw new Error(error)
+    }
+}
+
+export const getCurrentUser = async () => {
+    try{
+        const currentAccount:any = account.get();
+        if(!currentAccount) throw new Error('User not logged in') 
+
+        const currentUser = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            [
+                Query.equal('accountId', currentAccount.$id)
+            ]
+        )
+        if (!currentUser) throw new Error('User not found')
+
+        return currentUser.documents[0]
+    }catch(error:any){
+        throw new Error(error)
+    }
 }

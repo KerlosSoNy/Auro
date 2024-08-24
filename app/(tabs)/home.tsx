@@ -1,11 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { StatusBar } from 'expo-status-bar'
 
 const Home = () => {
     return (
-        <View>
-            <Text>home</Text>
-        </View>
+        <SafeAreaView className='bg-primary h-full'>
+            <ScrollView className='p-3'>
+                <Text className='text-white'>Home</Text>
+                <StatusBar backgroundColor='#161622' style='light' />
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
