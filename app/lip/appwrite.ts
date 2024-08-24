@@ -74,21 +74,32 @@ export const signIn = async({data}: {data:{email: string, password: string}})=>{
 }
 
 export const getCurrentUser = async () => {
-    try{
-        const currentAccount:any = account.get();
-        if(!currentAccount) throw new Error('User not logged in') 
+    try {
+        // Retrieve the current account
+        const currentAccount: any = await account.get(); // Ensure this is awaited if it returns a promise
+        
+        // Check if currentAccount is valid
+        if (!currentAccount || !currentAccount.$id) {
+            throw new Error('User not logged in or account ID is missing');
+        }
 
+        // Perform the query to get the user document
         const currentUser = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
             [
                 Query.equal('accountId', currentAccount.$id)
             ]
-        )
-        if (!currentUser) throw new Error('User not found')
+        );
 
-        return currentUser.documents[0]
-    }catch(error:any){
-        throw new Error(error)
+        // Check if any documents were returned
+        if (currentUser.total === 0) {
+            throw new Error('User not found');
+        }
+
+        return currentUser.documents[0];
+    } catch (error: any) {
+        console.error(error);
+        throw new Error(`Failed to get current user: ${error.message}`);
     }
 }
