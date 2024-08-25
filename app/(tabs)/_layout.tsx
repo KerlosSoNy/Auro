@@ -5,7 +5,7 @@ import { icons } from '../../constants'
 const TabIcon = ({ focused, name, color, icon }: any) => {
 
     return (
-        <View className='items-center justify-center gap-2'>
+        <View className={` items-center justify-center gap-2 rounded-full`}>
             <Image
                 source={icon}
                 tintColor={focused ? color : 'gray'}
